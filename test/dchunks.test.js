@@ -1,10 +1,9 @@
 var expect = require('chai').expect,
-    Dissolve = require('dissolve'),
     DChunks = require('../index.js');  // dissolve-chunks module
 
 describe('Module Equipped Properties and Methods Check', function() {
-    var dc = DChunks(),
-        ru = dc.Rule();
+    var dc = new DChunks(),
+        ru = dc.Rule;
 
     describe('#dc Equipped Functions', function() {
         it('.join should be a function', function () {
@@ -60,8 +59,8 @@ describe('Module Equipped Properties and Methods Check', function() {
 });
 
 describe('Parsing', function() {
-    var dc = DChunks(),
-        ru = dc.Rule();
+    var dc = new DChunks(),
+        ru = dc.Rule;
 
     var data1 = {
         x: 100,
@@ -92,16 +91,14 @@ describe('Parsing', function() {
         ru.repeat('m', ru.stringPreLenUint8)
     ];
 
-    var parser = DChunks().join(chunkRules).compile();
+    var parser = new DChunks().join(chunkRules).compile();
 
     describe('#parser.write', function() {
-        it('should have the correct parsed result', function (done) {
-            parser.once('parsed', function (data) {
-                expect(data1).to.eql(data);
-                done();
-            });
-        
-            parser.write(data1_buf);
+        it('should have the correct parsed result', function () {
+            const result = parser.process(data1_buf);
+            expect(result.length).to.eql(1);
+            const data = result[0]
+            expect(data1).to.eql(data);
         });
     });
 

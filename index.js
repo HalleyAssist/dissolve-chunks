@@ -1,41 +1,22 @@
 'strict'
-var Dissolve = require('dissolve');
-
-module.exports = function () {
-    var dChunks = Dissolve(),
-        _rules = [],
-        compiled = false;
-
-    dChunks.join = function (rules) {
-        if (typeof rules === 'function') {
-            rules = [ rules ];
-        }
-
-        rules.forEach(function (rule, idx) {
-            if (typeof rule === 'object') {
-                rules[idx] = Rule.squash(rule.name, rule.rules);
-                rule = rules[idx];
-            } else if (typeof rule !== 'function') {
-                throw new Error('x rule should be a function or a planned object.');
-            }
-            _rules.push(rule);
-        });
-
-        return dChunks;
-    };
-
-    dChunks.compile = function (config) {
+var Dissolve = require('./src/Dissolve');
+class DChunks extends Dissolve {
+    constructor(options){
+        super(options)
+        this._rules = []
+    }
+    compile (config) {
         var config = config || { once: false };
 
-        if (compiled) {
+        if (this.compiled) {
             throw new Error('The parser has been compiled.');
         }
 
-        _rules.push(Rule.term());
+        this._rules.push(Rule.term());
 
-        _rules.forEach(function (rule, idx) {
+        this._rules.forEach(function (rule, idx) {
             if (typeof rule === 'object') {
-               _rules[idx] = Rule.squash(rule.name, rule.rules);
+                this._rules[idx] = Rule.squash(rule.name, rule.rules);
             } else if (typeof rule !== 'function') {
                 throw new Error('rule should be a function or a planned object.');
             } else {
@@ -46,44 +27,59 @@ module.exports = function () {
         });
 
         if (config.once) {
-            dChunks.tap(function () {
-                _rules.forEach(function (rule) {
-                    dChunks = rule(dChunks);
+            this.tap(() => {
+                this._rules.forEach(rule => {
+                    rule(this);
                 });
             }); 
-
-            dChunks.once("readable", function() {
-                var parsed;
-                while (parsed = dChunks.read()) {
-                    dChunks.emit('parsed', deepRebuild(parsed));
-                }
-            });
         } else {
-            dChunks.loop(function () {
-                this.tap(function () {
-                    _rules.forEach(function (rule) {
-                        dChunks = rule(dChunks);
+            this.loop(()=> {
+                this.tap(()=> {
+                    this._rules.forEach(rule=> {
+                        rule(this);
                     });
                 }); 
             });
 
-            dChunks.on("readable", function() {
-                var parsed;
-                while (parsed = dChunks.read()) {
-                    dChunks.emit('parsed', deepRebuild(parsed));
-                }
-            });
         }
-        compiled = true;
-        return dChunks;
-    };
 
-    dChunks.Rule = function () {
-        return Rule;
-    };
+        this.compiled = true;
+        return this;
+    }
 
-    return dChunks;
-};
+    process(what){
+        const results = super.process(what)
+        const ret = []
+        for(const parsed of results){
+            ret.push(deepRebuild(parsed))
+        }
+        return ret
+    }
+
+    join (rules) {
+        if (typeof rules === 'function') {
+            rules = [ rules ];
+        }
+
+        for(const rule of rules){
+            if (typeof rule === 'object') {
+                rules[idx] = Rule.squash(rule.name, rule.rules);
+                rule = rules[idx];
+            } else if (typeof rule !== 'function') {
+                throw new Error('x rule should be a function or a planned object.');
+            }
+            this._rules.push(rule);
+        }
+
+        return this;
+    }
+
+    get Rule (){
+        return Rule
+    } 
+}
+module.exports = DChunks
+
 
 /*************************************************************************************************/
 /*** Protected Functions                                                                       ***/

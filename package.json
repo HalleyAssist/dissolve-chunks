@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/simenkid/dissolve-chunks",
   "dependencies": {
-    "dissolve": "0.3.3"
+    "bl": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
