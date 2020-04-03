@@ -74,7 +74,6 @@ class DChunks extends Dissolve {
         return this;
     }
 }
-DChunks.Rule = Rule
 module.exports = DChunks
 
 
@@ -284,6 +283,7 @@ var Rule = {
         return clausedRule;
     }
 };
+DChunks.Rule = Rule
 
 
 makeRulesOntoRule(Rule, uintRules);
