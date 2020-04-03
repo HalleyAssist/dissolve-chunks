@@ -73,11 +73,8 @@ class DChunks extends Dissolve {
 
         return this;
     }
-
-    get Rule (){
-        return Rule
-    } 
 }
+DChunks.Rule = Rule
 module.exports = DChunks
 
 

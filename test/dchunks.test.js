@@ -3,7 +3,7 @@ var expect = require('chai').expect,
 
 describe('Module Equipped Properties and Methods Check', function() {
     var dc = new DChunks(),
-        ru = dc.Rule;
+        ru = DChunks.Rule;
 
     describe('#dc Equipped Functions', function() {
         it('.join should be a function', function () {
@@ -60,7 +60,7 @@ describe('Module Equipped Properties and Methods Check', function() {
 
 describe('Parsing', function() {
     var dc = new DChunks(),
-        ru = dc.Rule;
+        ru = DChunks.Rule;
 
     var data1 = {
         x: 100,
