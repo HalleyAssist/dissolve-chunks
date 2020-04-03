@@ -47,6 +47,10 @@ class DChunks extends Dissolve {
         return this;
     }
 
+    get remainingBuffer(){
+        return this._buffer.slice(0, this._buffer.length)
+    }
+
     process(what){
         const results = super.process(what)
         const ret = []
