@@ -1,5 +1,7 @@
 'strict'
-var Dissolve = require('./src/Dissolve');
+const Dissolve = require('./src/Dissolve'),
+      ChunkStream = require('./src/ChunkStream')
+
 class DChunks extends Dissolve {
     constructor(options){
         super(options)
@@ -76,6 +78,10 @@ class DChunks extends Dissolve {
         }
 
         return this;
+    }
+
+    stream(){
+        return new ChunkStream(this)
     }
 }
 module.exports = DChunks
