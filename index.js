@@ -57,6 +57,7 @@ class DChunks extends Dissolve {
         const results = super.process(what)
         const ret = []
         for(const parsed of results){
+            if(parsed === null) break;
             ret.push(deepRebuild(parsed))
         }
         return ret
